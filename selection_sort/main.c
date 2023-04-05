@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 void selection_sort(int size, int input_list[]);
 void print_array(int size, int input_list[]);
@@ -10,11 +11,27 @@ void combine(int start, int end, int input_list[]);
 int main()
 {
     int input_list[] = {4, 1, 454, 234, 232, 11, 2};
-    int size = sizeof(input_list) / sizeof(int);
+    int byte_size = sizeof(input_list), size = byte_size / sizeof(int);
 
-    //selection_sort(size, input_list);
-    merge_sort()
+    // Different array for different algorithm
+    int selection_inputs[size], merge_inputs[size];
+
+    // Since each array is passed by reference,
+    // we need to copy them into separate arrays
+    memcpy(selection_inputs, input_list, byte_size);
+    memcpy(merge_inputs, input_list, byte_size);
+
+    selection_sort(size, selection_inputs);
+    merge_sort(0, size - 1, merge_inputs);
+
+    printf("Unsorted inputs: ");
     print_array(size, input_list);
+
+    printf("Selection sort: ");
+    print_array(size, selection_inputs);
+
+    printf("Merge sort ");
+    print_array(size, merge_inputs);
 
     return 0;
 }
@@ -29,75 +46,58 @@ void selection_sort(int size, int input_list[])
 
         for (int second = first + 1; second < size; second++)
         {
+            if (input_list[second] >=  min_value) continue;
 
-            if (input_list[second] < min_value)
-            {
-                min_value = input_list[second];
+            min_value = input_list[second];
 
-                input_list[second] = input_list[first];
-                input_list[first] = min_value;
-            }
+            input_list[second] = input_list[first];
+            input_list[first] = min_value;
         }
     }
 
     printf("Array size %d\n", size);
 }
 
-
 void merge_sort(int start, int end, int input_list[])
 {
     if (start >= end) return;
 
-    int middle = (end + start) / 2;
+    int middle = (start + end) / 2;
 
     merge_sort(start, middle, input_list);
     merge_sort(middle + 1, end, input_list);
 
-
+    combine(start, end, input_list);
 }
-
 
 void combine(int start, int end, int input_list[])
 {
-    int middle = (end + start) / 2, size = end - start;
+    int size = end - start + 1;
     int temp_list[size];
 
-    // Copy left and right chunks to the temporary array
-    for (int idx = start; idx < end; idx++)
-        temp_list[idx - start] = input_list[idx];
+    int middle = (start + end) / 2;
+    int left = start;
+    int right = middle + 1;
 
+    for (int idx = 0; idx < size; idx++) {
+        // If true, then everything remaining is in the right
+        if (left > middle)
+            temp_list[idx] = input_list[right++];
 
-    int left = 0, right = middle, idx = start;
+        // If true, then everything remaining is in the left
+        else if (right > end)
+            temp_list[idx] = input_list[left++];
 
-    while (left < middle && right < size)
-    {
-        if (temp_list[left] <= temp_list[right])
-        {
-            input_list[idx] = temp_list[left];
-            left++;
-        }
+        else if (input_list[left] <= input_list[right])
+            temp_list[idx] = input_list[left++];
+
         else
-        {
-            input_list[idx] = temp_list[right];
-            right++;
-        }
-        idx++;
+            temp_list[idx] = input_list[right++];
     }
 
-    while(left < middle)
-    {
-        input_list[idx] = temp_list[left];
-        left++;
-        idx++;
-    }
-
-    while (right < size)
-    {
-        input_list[idx] = temp_list[left];
-        right++;
-        idx++;
-    }
-
+    // Copy the temp list back to our primary array
+    for (int i = 0; i < size; i++)
+        input_list[start + i] = temp_list[i];
 }
 
 

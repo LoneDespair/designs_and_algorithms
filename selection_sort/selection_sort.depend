@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1680710140 source:d:\designs_and_algorithms-1\selection_sort\main.c
+	<stdio.h>
+	<stdlib.h>
+	<math.h>
+
