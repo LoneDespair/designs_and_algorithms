@@ -3,6 +3,8 @@
 
 void selection_sort(int size, int input_list[]);
 void print_array(int size, int input_list[]);
+void merge_sort(int start, int end, int input_list[]);
+void combine(int start, int end, int input_list[]);
 
 
 int main()
@@ -40,6 +42,24 @@ void selection_sort(int size, int input_list[])
     printf("Array size %d\n", size);
 
 }
+
+
+
+
+
+void merge_sort(int start, int end, int input_list[])
+{
+    if (start >= end) return;
+
+    int middle = (end + start) / 2;
+
+    merge_sort(start, middle, input_list);
+    merge_sort(middle + 1, end, input_list);
+
+
+}
+
+
 
 
 void print_array(int size, int input_list[])
